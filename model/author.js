@@ -1,4 +1,4 @@
-import supabase from '../config/DatabaseConfig'; // Importa tu instancia de Supabase
+import supabase from '../config/DatabaseConfig.js'; // Importa tu instancia de Supabase
 
 class Author {
   static async getAll() {
