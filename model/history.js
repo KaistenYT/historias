@@ -1,4 +1,4 @@
-import supabase from '../config/DatabaseConfig';
+import supabase from '../config/DatabaseConfig.js';
 
 export default class History {
   static async getAll() {
