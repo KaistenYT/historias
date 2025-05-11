@@ -4,9 +4,9 @@ import bodyParser from 'body-parser';
 
 // Importar rutas usando path
 
-import actorRoutes from './routes/actorRoutes';
-import authorRoutes from './routes/authorRoutes';
-import historyRoutes from './routes/historyRoutes';
+import actorRoutes from './routes/actorRoutes.js';
+import authorRoutes from './routes/authorRoutes.js';
+import historyRoutes from './routes/historyRoutes.js';
 
 const corsOptions = {
   origin: [
