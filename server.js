@@ -49,11 +49,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-// Default route
-app.get('*', (req, res) => {
-  res.status(404).json({ message: 'Not Found' });
-});
-
 // Export the app
 export default (req, res) => {
   app(req, res);

@@ -28,10 +28,6 @@
         {
             "source": "/histories/(.*)",
             "destination": "/histories/$1"
-        },
-        {
-            "source": "/(.*)",
-            "destination": "/$1"
         }
     ]
   
