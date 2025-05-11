@@ -24,28 +24,7 @@
         {
             "source": "/authors/(.*)",
             "destination": "/authors/$1"
-        },
-        {
-            "source": "/histories/(.*)",
-            "destination": "/histories/$1"
-        }
-    ],
-    "routes": [
-        {
-            "source": "/authors/(.*)",
-            "destination": "/authors/$1"
-        },
-        {
-            "source": "/participations/(.*)",
-            "destination": "/participations/$1"
-        },
-        {
-            "source": "/histories/(.*)",
-            "destination": "/histories/$1"
-        },
-        {
-            "source": "/(.*)",
-            "destination": "server.js"
         }
     ]
+  
 }
