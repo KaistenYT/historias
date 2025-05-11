@@ -26,6 +26,18 @@
         {
             "source": "/histories/(.*)",
             "destination": "/histories/$1"
+        }
+    ],
+    "settings": {
+        "esm": true
+    }
+        {
+            "source": "/authors/(.*)",
+            "destination": "/authors/$1"
+        },
+        {
+            "source": "/histories/(.*)",
+            "destination": "/histories/$1"
         },
         {
             "source": "/participations/(.*)",
