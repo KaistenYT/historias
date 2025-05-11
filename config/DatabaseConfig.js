@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
+// Check if environment variables are set
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Missing required environment variables');
   console.error('SUPABASE_URL:', supabaseUrl);
@@ -11,11 +12,36 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing required environment variables');
 }
 
+// Log environment variables
 console.log('Initializing Supabase client...');
 console.log('Supabase URL:', supabaseUrl);
 console.log('Supabase Anon Key:', supabaseAnonKey);
 
+// Create Supabase client
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Test connection
+async function testConnection() {
+  try {
+    const { data, error } = await supabase.from('history').select('*').limit(1);
+    if (error) {
+      console.error('Error testing Supabase connection:', error);
+      throw error;
+    }
+    console.log('Successfully connected to Supabase');
+  } catch (error) {
+    console.error('Failed to connect to Supabase:', error);
+    throw error;
+  }
+}
+
+// Run connection test
+try {
+  await testConnection();
+} catch (error) {
+  console.error('Failed to initialize Supabase client:', error);
+  throw error;
+}
 
 async function connectActorTable() {
   const { error } = await supabase
