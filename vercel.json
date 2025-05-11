@@ -24,6 +24,10 @@
         {
             "source": "/authors/(.*)",
             "destination": "/authors/$1"
+        },
+        {
+            "source": "/histories/(.*)",
+            "destination": "/histories/$1"
         }
     ]
   
