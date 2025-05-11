@@ -1,10 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
 console.log('Supabase URL:', supabaseUrl);
@@ -83,3 +79,6 @@ async function connectInitialTables() {
 connectInitialTables();
 
 export default supabase;
+
+// Export as named export for compatibility
+export const supabaseClient = supabase;
