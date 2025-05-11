@@ -1,4 +1,4 @@
-import Actor from '../model/actor';
+import Actor from '../model/actor.js';
 
 export class ActorController {
 
