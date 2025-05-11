@@ -38,6 +38,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Routes
 app.use('/actors', actorRoutes);
 app.use('/authors', authorRoutes);
 app.use('/histories', historyRoutes);
@@ -53,6 +54,7 @@ app.get('*', (req, res) => {
   res.status(404).json({ message: 'Not Found' });
 });
 
+// Export the app
 export default (req, res) => {
   app(req, res);
 };
