@@ -29,6 +29,24 @@
             "source": "/histories/(.*)",
             "destination": "/histories/$1"
         }
+    ],
+    "routes": [
+        {
+            "src": "/health",
+            "dest": "/health"
+        },
+        {
+            "src": "/actors/(.*)",
+            "dest": "/actors/$1"
+        },
+        {
+            "src": "/authors/(.*)",
+            "dest": "/authors/$1"
+        },
+        {
+            "src": "/histories/(.*)",
+            "dest": "/histories/$1"
+        }
     ]
   
 }
