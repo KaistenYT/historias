@@ -49,11 +49,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-
 // Export the app
 export default (req, res) => {
   app(req, res);
