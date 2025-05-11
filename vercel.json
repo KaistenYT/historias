@@ -30,9 +30,6 @@
             "destination": "/histories/$1"
         }
     ],
-    "settings": {
-        "esm": true
-    },
     "routes": [
         {
             "source": "/authors/(.*)",

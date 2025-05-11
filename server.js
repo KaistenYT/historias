@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
+// Enable ESM support
+import 'source-map-support/register';
+
 // Importar rutas usando path
 
 import actorRoutes from './routes/actorRoutes.js';
