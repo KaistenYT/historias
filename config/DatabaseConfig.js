@@ -12,6 +12,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error('SUPABASE_ANON_KEY:', supabaseAnonKey);
   console.error('NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
   console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  console.error('Available environment variables:', Object.keys(process.env));
   throw new Error('Missing required environment variables');
 }
 
