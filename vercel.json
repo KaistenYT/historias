@@ -30,7 +30,8 @@
     ],
     "settings": {
         "esm": true
-    }
+    },
+    "routes": [
         {
             "source": "/authors/(.*)",
             "destination": "/authors/$1"
