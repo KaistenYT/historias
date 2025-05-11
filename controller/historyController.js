@@ -1,4 +1,4 @@
-import History from "../model/history";
+import History from "../model/history.js";
 
 export class HistoryController {
   static async getAllHistory(req, res) {
