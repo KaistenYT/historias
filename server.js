@@ -17,6 +17,7 @@ const corsOptions = {
     'http://localhost:5174',
     'http://localhost:5173',
     'https://eco-museo-api.vercel.app',
+    'https://historias-api-crud.vercel.app',
     '*'
   ],
   credentials: true,
