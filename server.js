@@ -19,6 +19,7 @@ const corsOptions = {
     'https://eco-museo-api.vercel.app',
     'https://historias-api-crud.vercel.app',
     'https://historias-eight.vercel.app',
+    'https://eco-museo-api.vercel.app/',
     '*'
   ],
   credentials: true,
