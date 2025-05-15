@@ -91,6 +91,48 @@ class Actor {
     }
   }
 
+  static async addImage(idactor, file, filename) {
+    try {
+      // 1. Construct the storage path
+      const storagePath = `actores/${idactor}/${filename}`;
+
+      // 2. Upload the file to Supabase Storage
+      const { data: storageData, error: storageError } = await supabase
+        .storage
+        .from('imagenes-web') 
+        .upload(storagePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (storageError) {
+        console.error('Error uploading image to storage:', storageError);
+        throw storageError;
+      }
+
+      // 3. Construct the public URL of the uploaded image
+      const publicImageUrl = supabase.storage
+        .from('imagenes-web')   
+        .getPublicUrl(storagePath).data.publicUrl;
+
+      // 4. Update the 'actores' table with the image URL
+      const { data: actorData, error: actorError } = await supabase
+        .from('actores') 
+        .update({ imagen_url: publicImageUrl }) 
+        .eq('idactor', idactor)
+        .single(); 
+
+      if (actorError) {
+        console.error('Error updating actor with image URL:', actorError);
+        throw actorError;
+      }
+
+      return { ...actorData, publicImageUrl }; 
+    } catch (error) {
+      console.error('Error in addImage function:', error);
+      throw error;
+    }
+  }
 
   
 }
