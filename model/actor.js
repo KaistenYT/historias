@@ -4,16 +4,33 @@ class Actor {
   static async getAll() {
     try {
       const { data, error } = await supabase
-        .from('actor')
+        .from('actores')
         .select('*');
-
+  
       if (error) {
         console.error('Error al obtener todos los actores:', error);
         throw error;
       }
-      return data;
+  
+      // Si hay actores, agregar la URL pública de la imagen a cada uno
+      const actorsWithImages = data.map(actor => {
+        // Si el actor tiene imagen_url, obtener la URL pública
+        const publicImageUrl = actor.imagen_url 
+          ? supabase.storage
+              .from('imagenes-web')
+              .getPublicUrl(actor.imagen_url)
+              .data.publicUrl
+          : null;
+        
+        return {
+          ...actor,
+          public_image_url: publicImageUrl // Agregamos la URL pública como un nuevo campo
+        };
+      });
+  
+      return actorsWithImages;
     } catch (error) {
-      throw error; // Re-lanza el error para el manejo centralizado
+      throw error;
     }
   }
 
