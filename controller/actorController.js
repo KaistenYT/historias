@@ -1,4 +1,17 @@
 import Actor from '../model/actor.js';
+import multer from 'multer';
+
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('El archivo debe ser una imagen'));
+    }
+  }
+});
 
 export class ActorController {
 
@@ -118,6 +131,108 @@ export class ActorController {
         success: false,
         error: 'Error al eliminar el actor',
         message: error.message
+      });
+    }
+  }
+
+  static async addImage(req, res) {
+    try {
+      const { idactor } = req.params;
+      const file = req.file;
+      const { filename } = req.body;
+
+      if (!file) {
+        return res.status(400).json({
+          success: false,
+          message: 'No se proporcionó un archivo'
+        });
+      }
+
+      // Subir archivo a Supabase Storage
+      const storagePath = `actores/${idactor}/${filename}`;
+      const { data: storageData, error: storageError } = await supabase
+        .storage
+        .from('imagenes-web')
+        .upload(storagePath, file.buffer, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (storageError) {
+        throw storageError;
+      }
+
+      // Obtener URL pública
+      const publicImageUrl = supabase.storage
+        .from('imagenes-web')
+        .getPublicUrl(storagePath).data.publicUrl;
+
+      // Actualizar la tabla de actores con la URL de la imagen
+      const { data: actorData, error: actorError } = await supabase
+        .from('actores')
+        .update({ imagen_url: publicImageUrl })
+        .eq('idactor', idactor)
+        .select()
+        .single();
+
+      if (actorError) {
+        throw actorError;
+      }
+
+      res.json({
+        success: true,
+        message: 'Imagen subida exitosamente',
+        data: {
+          actor: actorData,
+          publicImageUrl
+        }
+      });
+    } catch (error) {
+      console.error('Error al subir imagen:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Error al subir imagen'
+      });
+    }
+  }
+
+  static async getActorImage(req, res) {
+    try {
+      const { idactor } = req.params;
+
+      const { data: actor, error } = await supabase
+        .from('actores')
+        .select('imagen_url')
+        .eq('idactor', idactor)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!actor.imagen_url) {
+        return res.status(404).json({
+          success: false,
+          message: 'No se encontró imagen para este actor'
+        });
+      }
+
+      // Obtener URL pública
+      const publicImageUrl = supabase.storage
+        .from('imagenes-web')
+        .getPublicUrl(actor.imagen_url).data.publicUrl;
+
+      res.json({
+        success: true,
+        data: {
+          publicImageUrl
+        }
+      });
+    } catch (error) {
+      console.error('Error al obtener imagen:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Error al obtener imagen'
       });
     }
   }
