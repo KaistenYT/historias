@@ -11,45 +11,40 @@ import authorRoutes from './routes/authorRoutes.js';
 import historyRoutes from './routes/historyRoutes.js';
 
 const corsOptions = {
-  origin: true, // Permite cualquier origen
+  origin: function (origin, callback) {
+    // Permitir localhost y todas las versiones de Vercel
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:5174',
+      'http://localhost:5173',
+      'https://historias-api-crud.vercel.app',
+      'https://historias-eight.vercel.app',
+      'https://eco-museo-api.vercel.app'
+    ];
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Content-Length', 'X-Requested-With', 'Accept'],
   exposedHeaders: ['Content-Length'],
   maxAge: 3600,
   preflightContinue: false,
-  optionsSuccessStatus: 204,
-  // Asegurarse de que el proxy funcione correctamente
-  preflight: (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Accept');
-    next();
-  }
+  optionsSuccessStatus: 204
 };
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.disable('x-powered-by');
-
-// Configurar CORS antes de cualquier ruta
-app.use(cors(corsOptions));
-
-// Middleware para manejar opciones CORS
-app.options('*', cors());
-
-// Middleware para manejar peticiones preflight
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Accept');
-  next();
-});
-
-// Middleware para JSON
 app.use(bodyParser.json());
+app.disable('x-powered-by');
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Health check endpoint
