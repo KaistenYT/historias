@@ -52,6 +52,40 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Logging middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err.stack);
+  
+  if (err.name === 'AxiosError') {
+    return res.status(500).json({
+      success: false,
+      error: 'Network error occurred',
+      message: 'Please check the server connection'
+    });
+  }
+
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.message || 'Internal Server Error',
+    message: err.message || 'Something went wrong!'
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Not Found',
+    message: `Route ${req.method} ${req.url} not found`
+  });
+});
+
 // Routes
 app.use('/actors', actorRoutes);
 app.use('/authors', authorRoutes);
