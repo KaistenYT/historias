@@ -23,7 +23,9 @@ export default class History {
 
   static async getById(id) {
     try {
-      
+      console.log('[HISTORY MODEL] Buscando historia con ID:', id);
+      console.log('[HISTORY MODEL] Tipo de ID:', typeof id);
+      console.log('[HISTORY MODEL] Longitud de ID:', id?.length);
       
       // Primero intentar obtener la historia básica
       const { data: historyData, error: historyError } = await supabase

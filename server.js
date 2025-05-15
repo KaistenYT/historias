@@ -11,6 +11,7 @@ import authorRoutes from './routes/authorRoutes.js';
 import historyRoutes from './routes/historyRoutes.js';
 
 const corsOptions = {
+<<<<<<< HEAD
   origin: function (origin, callback) {
     // Permitir localhost y todas las versiones de Vercel
     const allowedOrigins = [
@@ -29,6 +30,17 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
+=======
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:5174',
+    'http://localhost:5173',
+    'https://eco-museo-api.vercel.app',
+    'https://historias-api-crud.vercel.app',
+    '*'
+  ],
+>>>>>>> parent of 3309c1d (mini cambios)
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Content-Length', 'X-Requested-With', 'Accept'],
