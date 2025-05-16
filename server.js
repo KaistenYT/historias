@@ -19,7 +19,8 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.disable('x-powered-by');
 app.use(cors({
-   origin : 'https://eco-museo-api.vercel.app',
+   origin : ['https://eco-museo-api.vercel.app',
+   "https://historias-api-crud.vercel.app"],
    method : 'GET, POST, PUT, DELETE',
    allowedHeaders: 'Content-Type, Authorization'
 }));
