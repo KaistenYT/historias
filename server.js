@@ -19,22 +19,6 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.disable('x-powered-by');
 app.use(cors(
-  {
-    origin: true,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
-    exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
-    maxAge: 3600,
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-    preflight: (req, res, next) => {
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
-      next();
-    }
-  }
 ));
 app.use(express.json());
 
