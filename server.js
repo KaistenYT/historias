@@ -18,8 +18,11 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(bodyParser.json());
 app.disable('x-powered-by');
-app.use(cors(
-));
+app.use(cors({
+   origin : 'https://eco-museo-api.vercel.app',
+   method : 'GET, POST, PUT, DELETE',
+   allowedHeaders: 'Content-Type, Authorization'
+}));
 app.use(express.json());
 
 // Health check endpoint
