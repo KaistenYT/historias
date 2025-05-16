@@ -4,7 +4,7 @@ class Actor {
   static async getAll() {
     try {
       const { data, error } = await supabase
-        .from('actores')
+        .from('actor')
         .select('*');
 
       if (error) {
