@@ -47,6 +47,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Routes
+app.use('/actors', actorRoutes);
+app.use('/authors', authorRoutes);
+app.use('/histories', historyRoutes);
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
@@ -83,10 +88,12 @@ app.use('/histories', historyRoutes);
 // Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+  res.status(500).json({ 
+    success: false,
+    error: err.message || 'Internal Server Error',
+    message: err.message || 'Something went wrong!' 
+  });
 });
 
 // Export the app
-export default (req, res) => {
-  app(req, res);
-};
+export default app;
