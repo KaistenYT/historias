@@ -22,7 +22,8 @@ app.use(cors({
    origin : ['https://eco-museo-api.vercel.app',
    "https://historias-api-crud.vercel.app"],
    method : 'GET, POST, PUT, DELETE',
-   allowedHeaders: 'Content-Type, Authorization'
+   allowedHeaders: 'Content-Type, Authorization',s
+   credentials: true,
 }));
 app.use(express.json());
 
