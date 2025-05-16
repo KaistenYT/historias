@@ -19,11 +19,10 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.disable('x-powered-by');
 app.use(cors({
-   origin : ['https://eco-museo-api.vercel.app',
-   "https://historias-api-crud.vercel.app"],
-   method : 'GET, POST, PUT, DELETE',
-   allowedHeaders: 'Content-Type, Authorization',s
-   credentials: true,
+  origin: ['https://eco-museo-api.vercel.app'], // Ensure this is the exact origin of your frontend
+  methods: 'GET, POST, PUT, DELETE, OPTIONS',
+  allowedHeaders: 'Content-Type, Authorization',
+  credentials: true // This is the critical part
 }));
 app.use(express.json());
 
