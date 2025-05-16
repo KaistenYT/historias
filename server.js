@@ -11,15 +11,20 @@ import authorRoutes from './routes/authorRoutes.js';
 import historyRoutes from './routes/historyRoutes.js';
 
 const corsOptions = {
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:5174',
-    'http://localhost:5173',
-    'https://eco-museo-api.vercel.app',
-    'https://historias-api-crud.vercel.app',
-    '*'
-  ]
+  origin: true, // Permite cualquier origen
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+  maxAge: 3600, // 1 hora
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  preflight: (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
+    next();
+  }
 };
 
 const app = express();
