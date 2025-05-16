@@ -10,22 +10,7 @@ import actorRoutes from './routes/actorRoutes.js';
 import authorRoutes from './routes/authorRoutes.js';
 import historyRoutes from './routes/historyRoutes.js';
 
-const corsOptions = {
-  origin: true, // Permite cualquier origen
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
-  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
-  maxAge: 3600, // 1 hora
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  preflight: (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
-    next();
-  }
-};
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -33,7 +18,24 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(bodyParser.json());
 app.disable('x-powered-by');
-app.use(cors(corsOptions));
+app.use(cors(
+  {
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+    exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+    maxAge: 3600,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    preflight: (req, res, next) => {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
+      next();
+    }
+  }
+));
 app.use(express.json());
 
 // Health check endpoint
@@ -79,11 +81,6 @@ app.use((req, res) => {
     message: `Route ${req.method} ${req.url} not found`
   });
 });
-
-// Routes
-app.use('/actors', actorRoutes);
-app.use('/authors', authorRoutes);
-app.use('/histories', historyRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
