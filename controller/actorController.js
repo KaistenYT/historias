@@ -1,6 +1,6 @@
 import Actor from '../model/actor.js';
 
-
+import fs from 'fs/promises';
 
 
 export class ActorController {
@@ -125,5 +125,47 @@ export class ActorController {
     }
   }
 
+  static async uploadActorImage(req, res) {
+    const { actorId } = req.params;
+
+    // Verificar si se envió un archivo
+    if (!req.file) {
+        return res.status(400).json({ message: 'Por favor, sube una imagen' });
+    }
+
+    try {
+        // Leer el contenido del archivo desde la ruta guardada por multer (diskStorage)
+        const imageBuffer = await fs.readFile(req.file.path);
+
+        // Llama a la función uploadImage de tu modelo Actor, pasando el buffer
+        const updatedActor = await Actor.uploadImage(actorId, imageBuffer);
+
+        res.status(200).json(updatedActor); // Envía la respuesta con el actor actualizado (incluyendo la URL de la imagen)
+    } catch (error) {
+        console.error('Error al subir la imagen del actor en el controlador:', error);
+        res.status(500).json({ message: 'Error al subir la imagen del actor', error: error.message });
+    } finally {
+        // Opcional: Eliminar el archivo temporal del servidor después de subirlo a Supabase
+        if (req.file && req.file.path) {
+            try {
+                await fs.unlink(req.file.path);
+                console.log('Archivo temporal eliminado:', req.file.path);
+            } catch (unlinkError) {
+                console.error('Error al eliminar el archivo temporal:', unlinkError);
+            }
+        }
+      }
+    }
+
+  static async deleteActorImage(req, res) {
+    const { actorId } = req.params;
+    try {
+      const result = await Actor.deleteImage(actorId);
+      res.status(200).json({ message: 'Imagen del actor eliminada exitosamente', data: result });
+    } catch (error) {
+      console.error('Error al eliminar la imagen del actor en el controlador:', error);
+      res.status(500).json({ message: 'Error al eliminar la imagen del actor', error: error.message });
+    }
+  }
  
 }
