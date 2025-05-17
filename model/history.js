@@ -398,4 +398,107 @@ export default class History {
       throw error;
     }
   }
+
+  static async addImage(id, image){
+    try {
+      const { data, error } = await supabase
+        .from('history')
+        .update({ imagen: image })
+        .eq('idhistory', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async uploadImage(authorId, image) {
+    console.log('Iniciando uploadImage para authorId:', authorId);
+    try {
+      const filename = `author-${authorId}.jpg`;
+      console.log('Nombre de archivo generado:', filename);
+  
+      // 1. Subir la imagen a Supabase Storage
+      console.log('Intentando subir imagen a Supabase Storage...');
+      const { data: storageData, error: storageError } = await supabase
+        .storage
+        .from('imagenes-web')
+        .upload(`historias/${filename}`, image, {
+          cacheControl: '3600',
+          upsert: false
+        });
+  
+      console.log('Resultado de la subida:', { storageData, storageError });
+  
+      if (storageError) {
+        console.error('Error al subir imagen:', storageError);
+        throw storageError;
+      }
+  
+      console.log('Imagen subida exitosamente. Intentando obtener URL pública...');
+  
+      // 2. Obtener la URL pública de la imagen subida
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('imagenes-web')
+        .getPublicUrl(`historias/${filename}`);
+  
+      console.log('Resultado de obtener URL pública:', { publicUrlData });
+  
+      const publicImageUrl = publicUrlData?.publicUrl;
+  
+      if (!publicImageUrl) {
+        console.error('No se pudo obtener la URL pública de la imagen.');
+        throw new Error('No se pudo obtener la URL pública de la imagen.');
+      }
+  
+      console.log('URL pública obtenida:', publicImageUrl);
+  
+      // 3. Actualizar la tabla 'history' con la URL de la imagen
+      console.log('Intentando actualizar la tabla "history" con la URL de la imagen...');
+      const { data: historyData, error: historyError } = await this.addImage(authorId, publicImageUrl);
+  
+      console.log('Resultado de la actualización de la tabla "history":', { historyData, historyError });
+  
+      if (historyError) {
+        console.error('Error al actualizar la tabla "history":', historyError);
+        throw historyError;
+      }
+  
+      console.log('Tabla "history" actualizada exitosamente. Retornando datos del autor.');
+      return historyData;
+    } catch (error) {
+      console.error('Error en la función uploadImage:', error);
+      throw error;
+    } finally {
+      // Opcional: Eliminar el archivo temporal del servidor después de subirlo a Supabase
+      if (image && image.path) {
+        try {
+          await fs.unlink(image.path);
+          console.log('Archivo temporal eliminado:', image.path);
+        } catch (unlinkError) {
+          console.error('Error al eliminar el archivo temporal:', unlinkError);
+        }
+      }
+    }
+  }
+  
+  static async deleteImage(id){
+    try {
+      const { data, error } = await supabase
+        .from('history')
+        .update({ imagen: null })
+        .eq('idhistory', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -119,4 +119,49 @@ export class AuthorController {
       });
     }
   }
+  
+  static async uploadAuthorImage(req, res) {
+    try {
+      const authorId = req.params.authorId;
+      const image = req.file;
+      
+      if (!image) {
+        return res.status(400).json({
+          success: false,
+          error: 'No se proporcionó una imagen'
+        });
+      }
+      
+      const author = await Author.uploadImage(authorId, image);
+      return res.json({
+        success: true,
+        message: 'Imagen subida exitosamente',
+        data: author
+      });
+    } catch (error) {
+      console.error('Error al subir la imagen del autor', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  }
+  
+  static async deleteAuthorImage(req, res) {
+    try {
+      const authorId = req.params.authorId;
+      const deletedAuthor = await Author.deleteImage(authorId);
+      return res.json({
+        success: true,
+        message: 'Imagen eliminada exitosamente',
+        data: deletedAuthor
+      });
+    } catch (error) {
+      console.error('Error al eliminar la imagen del autor', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  }
 }

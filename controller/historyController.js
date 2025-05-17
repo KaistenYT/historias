@@ -191,4 +191,52 @@ export class HistoryController {
         });
       }
     }
-  }}
+  }
+
+  static async uploadHistoryImage(req, res) {
+    try {
+      const historyId = req.params.historyId;
+      const image = req.file;
+      
+      if (!image) {
+        return res.status(400).json({
+          success: false,
+          error: 'No se proporcionó una imagen'
+        });
+      }
+      
+      const history = await History.uploadImage(historyId, image);
+      return res.json({
+        success: true,
+        message: 'Imagen subida exitosamente',
+        data: history
+      });
+    } catch (error) {
+      console.error('Error al subir la imagen de la historia', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  }
+
+  static async deleteHistoryImage(req, res) {
+    try {
+      const historyId = req.params.historyId;
+      const deletedHistory = await History.deleteImage(historyId);
+      return res.json({
+        success: true,
+        message: 'Imagen eliminada exitosamente',
+        data: deletedHistory
+      });
+    } catch (error) {
+      console.error('Error al eliminar la imagen de la historia', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  }
+
+
+}
