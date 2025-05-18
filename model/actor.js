@@ -45,7 +45,7 @@ class Actor {
         .single();
 
       if (error) {
-        console.error('Error al crear actor:', error);
+        console.error('Error al crear actor desde el Modelo:', error);
         throw error;
       }
       return data;
@@ -64,7 +64,7 @@ class Actor {
         .single();
 
       if (error) {
-        console.error('Error al actualizar actor:', error);
+        console.error('Error al actualizar actor desde el Modelo:', error);
         throw error;
       }
       return data;
@@ -88,6 +88,92 @@ class Actor {
       }
       return data;
     } catch (error) {
+      throw error;
+    }
+  }
+
+  static async uploadImage(actorId, image) {
+    console.log('Iniciando uploadImage para actorId:', actorId);
+    try {
+      const filename = `actor-${actorId}.jpg`;
+      console.log('Nombre de archivo generado:', filename);
+  
+      // 1. Subir la imagen a Supabase Storage
+      console.log('Intentando subir imagen a Supabase Storage...');
+      const { data: storageData, error: storageError } = await supabase
+        .storage
+        .from('imagenes-web')
+        .upload(`titeres/${filename}`, image, {
+          cacheControl: '3600',
+          upsert: false
+        });
+  
+      console.log('Resultado de la subida:', { storageData, storageError });
+  
+      if (storageError) {
+        console.error('Error al subir imagen:', storageError);
+        throw storageError;
+      }
+  
+      console.log('Imagen subida exitosamente. Intentando obtener URL pública...');
+  
+      // 2. Obtener la URL pública de la imagen subida
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('imagenes-web')
+        .getPublicUrl(`titeres/${filename}`);
+  
+      console.log('Resultado de obtener URL pública:', { publicUrlData });
+  
+      const publicImageUrl = publicUrlData?.publicUrl;
+  
+      if (!publicImageUrl) {
+        console.error('No se pudo obtener la URL pública de la imagen.');
+        throw new Error('No se pudo obtener la URL pública de la imagen.');
+      }
+  
+      console.log('URL pública obtenida:', publicImageUrl);
+  
+      // 3. Actualizar la tabla 'actor' con la URL de la imagen
+      console.log('Intentando actualizar la tabla "actor" con la URL de la imagen...');
+      const { data: actorData, error: actorError } = await supabase
+        .from('actor')
+        .update({ imagen: publicImageUrl })
+        .eq('idactor', actorId)
+        .select()
+        .single();
+  
+      console.log('Resultado de la actualización de la tabla "actor":', { actorData, actorError });
+  
+      if (actorError) {
+        console.error('Error al actualizar la tabla actor con la URL de la imagen:', actorError);
+        throw actorError;
+      }
+  
+      console.log('Tabla "actor" actualizada exitosamente. Retornando datos del actor.');
+      return actorData;
+  
+    } catch (error) {
+      console.error('Error en la función uploadImage:', error);
+      throw error;
+    } finally {
+      console.log('Finalizando la función uploadImage para actorId:', actorId);
+    }
+  }
+
+  static async deleteImage(actorId){
+    try{
+      const { data, error } = await supabase
+        .storage
+        .from('imagenes-web')
+        .remove(`titeres/actor-${actorId}.jpg`);
+
+      if (error) {
+        console.error('Error al eliminar imagen:', error);
+        throw error;
+      }
+      return data;
+    } catch (error){
       throw error;
     }
   }
