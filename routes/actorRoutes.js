@@ -5,14 +5,8 @@ import multer from 'multer';
 const router = express.Router();
 
 // Configuración de multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Directorio donde se guardarán las imágenes
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // Nombre único para la imagen
-  }
-}); 
+const storage = multer.memoryStorage();
+
 const upload = multer({
     storage: storage,
     limits: {
@@ -30,3 +24,4 @@ router.post('/upload-image/:actorId/image', upload.single('file'), ActorControll
 router.delete('/delete-image/:actorId/image', ActorController.deleteActorImage); // Elimina la imagen del actor
 
 export default router;
+
