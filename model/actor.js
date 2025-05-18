@@ -45,7 +45,7 @@ class Actor {
         .single();
 
       if (error) {
-        console.error('Error al crear actor:', error);
+        console.error('Error al crear actor desde el Modelo:', error);
         throw error;
       }
       return data;
@@ -64,7 +64,7 @@ class Actor {
         .single();
 
       if (error) {
-        console.error('Error al actualizar actor:', error);
+        console.error('Error al actualizar actor desde el Modelo:', error);
         throw error;
       }
       return data;

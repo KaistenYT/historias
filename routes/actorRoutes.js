@@ -13,8 +13,12 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + '-' + file.originalname); // Nombre único para la imagen
   }
 }); 
-
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    limits: {
+      fileSize: 5 * 1024 * 1024, // 5 MB (en bytes)
+    },
+  });
 
 // Rutas para actores
 router.get('/list', ActorController.getAllActors); // Lista todos los actores

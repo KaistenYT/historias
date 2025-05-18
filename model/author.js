@@ -93,7 +93,7 @@ class Author {
       const { data: storageData, error: storageError } = await supabase
         .storage
         .from('imagenes-web')
-        .upload(`titeres/${filename}`, image, {
+        .upload(`autores/${filename}`, image, {
           cacheControl: '3600',
           upsert: false
         });
