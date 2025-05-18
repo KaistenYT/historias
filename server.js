@@ -19,7 +19,7 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.disable('x-powered-by');
 app.use(cors({
-  origin: [/*'https://eco-museo-api.vercel.app',*/
+  origin: ['https://eco-museo-api.vercel.app',
     'http://localhost:5173'
   ], // Ensure this is the exact origin of your frontend
   methods: 'GET, POST, PUT, DELETE, OPTIONS',
