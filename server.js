@@ -20,7 +20,8 @@ app.use(bodyParser.json());
 app.disable('x-powered-by');
 app.use(cors({
   origin: ['https://eco-museo-api.vercel.app',
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'https://historias-v2-api.vercel.app'
   ], // Ensure this is the exact origin of your frontend
   methods: 'GET, POST, PUT, DELETE, OPTIONS',
   allowedHeaders: 'Content-Type, Authorization',
