@@ -1,4 +1,5 @@
 import History from "../model/history.js";
+import fs from 'fs/promises';
 
 export class HistoryController {
   static async getAllHistory(req, res) {
@@ -191,4 +192,44 @@ export class HistoryController {
         });
       }
     }
-  }}
+  }
+
+  static async uploadHistoryImage(req, res){
+    const {historyId} = req.params;
+    try{
+      const imageBuffer = await fs.readFile(req.file.path)
+      const updatedHistory = await History.uploadImage(historyId, imageBuffer)
+      res.status(200).json(updatedHistory)
+    }catch(error){
+      console.error('Error al subir la imagen de la historia:', error)
+      res.status(500).json({
+        success: false,
+        error: 'Error al subir la imagen de la historia',
+        message: error.message
+      })
+    }finally{
+      if(req.file && req.file.path){
+        try{
+          await fs.unlink(req.file.path)
+          console.log('Archivo temporal eliminado:', req.file.path)
+        }catch(unlinkError){
+          console.error('Error al eliminar el archivo temporal:', unlinkError)
+        }
+      }
+    }
+
+ 
+  }
+
+  static async deleteHistoryImage(req, res){
+    const {historyId} = req.params;
+    try{
+      const result = await History.deleteImage(historyId);
+      res.status(200).json({ message: 'Imagen de la historia eliminada exitosamente', data: result });
+    }catch(error){
+      console.error('Error al eliminar la imagen de la historia en el controlador:', error);
+      res.status(500).json({ message: 'Error al eliminar la imagen de la historia', error: error.message });
+    }
+  }
+
+}

@@ -398,4 +398,60 @@ export default class History {
       throw error;
     }
   }
+
+  static async uploadImage(historyId, image) {
+    try {
+      const filename = `history-${historyId}.jpg`;
+      const { data: storageData, error: storageError } = await supabase
+        .storage
+        .from('imagenes-web')
+        .upload(`historias/${filename}`, image, {
+          cacheControl: '3600',
+          upsert: false
+        });
+      if (storageError) throw storageError;
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('imagenes-web')
+        .getPublicUrl(`historias/${filename}`);
+      const publicImageUrl = publicUrlData?.publicUrl;
+      if (!publicImageUrl) throw new Error('No se pudo obtener la URL pública de la imagen.');
+      const { data: historyData, error: historyError } = await supabase
+        .from('history')
+        .update({ imagen: publicImageUrl })
+        .eq('idhistory', historyId)
+        .select()
+        .single();
+      if (historyError) throw historyError;
+      return historyData;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async deleteImage(historyId) {
+    try {
+      const { data: historyData, error: historyError } = await supabase
+        .from('history')
+        .select('imagen')
+        .eq('idhistory', historyId)
+        .single();
+      if (historyError) throw historyError;
+      const { data: storageData, error: storageError } = await supabase
+        .storage
+        .from('imagenes-web')
+        .remove([`historias/${historyData.imagen.split('/').pop()}`]);
+      if (storageError) throw storageError;
+      const { data: deletedHistoryData, error: deletedHistoryError } = await supabase
+        .from('history')
+        .update({ imagen: null })
+        .eq('idhistory', historyId)
+        .select()
+        .single();
+      if (deletedHistoryError) throw deletedHistoryError;
+      return deletedHistoryData;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
