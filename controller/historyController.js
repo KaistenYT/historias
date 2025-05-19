@@ -197,7 +197,7 @@ export class HistoryController {
   static async uploadHistoryImage(req, res){
     const {historyId} = req.params;
     try{
-      const imageBuffer = await fs.readFile(req.file.path)
+      const imageBuffer = req.file.buffer
       const updatedHistory = await History.uploadImage(historyId, imageBuffer)
       res.status(200).json(updatedHistory)
     }catch(error){
