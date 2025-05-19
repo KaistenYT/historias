@@ -135,7 +135,7 @@ export class ActorController {
 
     try {
         // Leer el contenido del archivo desde la ruta guardada por multer (diskStorage)
-        const imageBuffer = await fs.readFile(req.file.path);
+        const imageBuffer = req.file.buffer;
 
         // Llama a la función uploadImage de tu modelo Actor, pasando el buffer
         const updatedActor = await Actor.uploadImage(actorId, imageBuffer);
