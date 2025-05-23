@@ -5,13 +5,34 @@ class Author {
     try {
       const { data, error } = await supabase
         .from('autor')
-        .select('*');
+        .select(`
+          idautor,
+          descripcion,
+          imagen,
+          resenia,
+          historia_autor (
+            history (
+              idhistory,
+              titulo,
+              descripcion,
+              imagen
+            )
+          )
+        `);
 
       if (error) {
         console.error('Error al obtener todos los autores:', error);
         throw error; // Lanza el error para que el controlador lo maneje
       }
-      return data;
+
+      // Re-formatear los datos para que el frontend reciba `autor.obras` directamente
+      const formattedData = data.map(autor => ({
+        ...autor,
+        // Mapea el array de `historia_autor` para extraer solo el objeto `history`
+        obras: autor.historia_autor.map(ha => ha.history).filter(Boolean)
+      }));
+
+      return formattedData; // Retorna los datos ya formateados
     } catch (error) {
       throw error;
     }
@@ -21,12 +42,33 @@ class Author {
     try {
       const { data, error } = await supabase
         .from('autor')
-        .select('*')
+        .select(  `
+          idautor,
+          descripcion,
+          imagen,
+          resenia,
+          historia_autor (
+            history (
+              idhistory,
+              titulo,
+              descripcion,
+              imagen
+            )
+          )
+        `)
         .eq('idautor', id)
         .single();
 
       if (error) throw error;
-      return data;
+
+      // Re-formatear los datos para que el frontend reciba `autor.obras` directamente
+      const formattedData = {
+        ...data,
+        // Mapea el array de `historia_autor` para extraer solo el objeto `history`
+        obras: data.historia_autor.map(ha => ha.history).filter(Boolean)
+      };
+
+      return formattedData; // Retorna los datos ya formateados
     } catch (error) {
       throw error;
     }

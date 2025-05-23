@@ -5,15 +5,36 @@ class Actor {
     try {
       const { data, error } = await supabase
         .from('actor')
-        .select('*');
+        .select(`
+          idactor,
+          descripcion,
+          imagen,
+          caracteristicas,
+          historia_actor (
+            history (
+              idhistory,
+              titulo,
+              descripcion,
+              imagen
+            )
+          )
+        `);
 
       if (error) {
         console.error('Error al obtener todos los actores:', error);
         throw error;
       }
 
-      return data;
+      // Re-formatear los datos para que el frontend reciba `actor.obras` directamente
+      const formattedData = data.map(actor => ({
+        ...actor,
+        // Mapea el array de `historia_actor` para extraer solo el objeto `history`
+        obras: actor.historia_actor.map(ha => ha.history).filter(Boolean)
+      }));
+
+      return formattedData; // Retorna los datos ya formateados
     } catch (error) {
+      // Re-lanza el error para que el controlador lo capture
       throw error;
     }
   }
@@ -22,7 +43,20 @@ class Actor {
     try {
       const { data, error } = await supabase
         .from('actor')
-        .select('*')
+        .select(`
+          idactor,
+          descripcion,
+          imagen,
+          caracteristicas,
+          historia_actor (
+            history (
+              idhistory,
+              titulo,
+              descripcion,
+              imagen
+            )
+          )
+        `)
         .eq('idactor', id)
         .single();
 
@@ -30,8 +64,17 @@ class Actor {
         console.error('Error al obtener actor por ID:', error);
         throw error;
       }
-      return data;
+
+      // Re-formatear los datos para que el frontend reciba `actor.obras` directamente
+      const formattedData = {
+        ...data,
+        // Mapea el array de `historia_actor` para extraer solo el objeto `history`
+        obras: data.historia_actor.map(ha => ha.history).filter(Boolean)
+      };
+
+      return formattedData; // Retorna los datos ya formateados
     } catch (error) {
+      // Re-lanza el error para que el controlador lo capture
       throw error;
     }
   }

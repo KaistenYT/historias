@@ -21,7 +21,7 @@ router.delete('/delete/:id', HistoryController.deleteHistory)
 
 
 //mis changes
-router.post('/upload-image/:historyId/image', upload.single('file'), HistoryController.uploadHistoryImage); // Sube la imagen de la historia (APLICANDO el middleware)
+router.post('/upload-image/:historyId/image', upload.single('image'), HistoryController.uploadHistoryImage); // Sube la imagen de la historia (APLICANDO el middleware)
 router.delete('/delete-image/:historyId/image', HistoryController.deleteHistoryImage); // Elimina la imagen de la historia
 
 
