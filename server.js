@@ -19,12 +19,23 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.disable('x-powered-by');
 app.use(cors({
-  origin: ['https://eco-museo-api.vercel.app'], // Ensure this is the exact origin of your frontend
+  origin: ['https://eco-museo-api.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://historias-v2-api.vercel.app',
+    'https://historias-v2-api-git-cambios-para-la-45d328-kaistenyts-projects.vercel.app'
+  ], // Ensure this is the exact origin of your frontend
   methods: 'GET, POST, PUT, DELETE, OPTIONS',
   allowedHeaders: 'Content-Type, Authorization',
   credentials: true // This is the critical part
 }));
-app.use(express.json());
+
+
+// Configura el límite para las peticiones JSON
+app.use(express.json({ limit: '5mb' })); // Asegúrate de que este límite sea suficiente
+
+// Configura el límite para las peticiones URL-encoded (si las usas)
+app.use(express.urlencoded({ limit: '5mb', extended: true }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -82,6 +93,10 @@ app.use((err, req, res, next) => {
     error: err.message || 'Internal Server Error',
     message: err.message || 'Something went wrong!' 
   });
+});
+//solo para pruebas
+app.listen(port, () => {
+  console.log(`Servidor escuchando en http://localhost:${port}`);
 });
 
 // Export the app
