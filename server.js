@@ -23,7 +23,7 @@ app.use(cors({
     'http://localhost:5173',
     'http://localhost:5174',
     'https://historias-v2-api.vercel.app',
-    'ecomuseomarioeddy.netlify.app',
+    'https://ecomuseomarioeddy.netlify.app',
     'https://historias-v2-api-git-cambios-para-la-45d328-kaistenyts-projects.vercel.app'
   ], // Ensure this is the exact origin of your frontend
   methods: 'GET, POST, PUT, DELETE, OPTIONS',
