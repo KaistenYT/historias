@@ -1,4 +1,4 @@
-import supabase from "../config/DatabaseConfig";
+import supabase from "../config/DatabaseConfig.js";
 
 class Taller{
 
