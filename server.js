@@ -9,7 +9,7 @@ import bodyParser from 'body-parser';
 import actorRoutes from './routes/actorRoutes.js';
 import authorRoutes from './routes/authorRoutes.js';
 import historyRoutes from './routes/historyRoutes.js';
-
+import tallerRoutes from './routes/tallerRoutes.js';
 
 
 const app = express();
@@ -57,6 +57,7 @@ app.use((req, res, next) => {
 app.use('/actors', actorRoutes);
 app.use('/authors', authorRoutes);
 app.use('/histories', historyRoutes);
+app.use('/tallers', tallerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
