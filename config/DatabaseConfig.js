@@ -78,19 +78,6 @@ async function connectHistoryTable() {
   }
 }
 
-/*async function connectParticipationTable() {
-  const { error } = await supabase
-    .from('participation')
-    .insert([]);
-    //.single(); Removed .single()
-
-  if (error) {
-    console.error('Error al interactuar con la tabla "participation":', error);
-    console.error('Detalles del error:', error);
-  } else {
-    console.log('Tabla "participation" creada.');
-  }
-}*/
 
 
 
@@ -98,7 +85,7 @@ async function connectInitialTables() {
   await connectActorTable();
   await connectTableAuthor();
   await connectHistoryTable();
- // await connectParticipationTable();
+
   console.log('Tablas iniciales existentes. 😁');
 }
 
