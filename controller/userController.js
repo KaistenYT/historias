@@ -1,6 +1,6 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-import User  from "../model/user";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User  from "../model/user.js";
 
 export class UserController{
 
@@ -65,7 +65,21 @@ export class UserController{
     }
     static async getProfile (req , res){
         try{
-          const user = await User.findById(req.user.id);
+          const user = await User.findById(req.params.id);
+          if(!user){
+            return res.status(404).json({message: "User not found"});
+          }
+          const { password, ...userWithoutPassword } = user;
+            res.json(userWithoutPassword);
+        }catch(error){
+            console.log(error);
+            return res.status(500).json({message: "Internal server error"});
+        }
+    }
+
+    static async getProfileById(req, res){
+        try{
+          const user = await User.findById(req.params.id);
           if(!user){
             return res.status(404).json({message: "User not found"});
           }

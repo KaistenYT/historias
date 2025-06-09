@@ -38,27 +38,7 @@ class User{
         return data;
     }
 
-    static async update(id, user){
-        const {data, error} = await supabase.from("user").update(user).eq("id", id).select().maybeSingle();
-
-        if(error){
-            console.log(error);
-            throw error;
-        }
-
-        return data;
-    }
-
-    static async delete(id){
-        const {data, error} = await supabase.from("user").delete().eq("id", id).select().maybeSingle();
-
-        if(error){
-            console.log(error);
-            throw error;
-        }
-
-        return data;
-    }
 }
+
 
 export default User;
