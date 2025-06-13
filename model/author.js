@@ -108,8 +108,33 @@ class Author {
     }
   }
 
+  static async deleteAuthorHistories(authorId) {
+    try {
+      // Primero, eliminar las relaciones en la tabla historia_autor
+      const { data: relations, error: deleteError } = await supabase
+        .from('historia_autor')
+        .delete()
+        .eq('idautor', authorId)
+        .select('*');
+
+      if (deleteError) {
+        console.error('Error al eliminar relaciones de historias del autor:', deleteError);
+        throw deleteError;
+      }
+
+      return relations;
+    } catch (error) {
+      console.error('Error en deleteAuthorHistories:', error);
+      throw error;
+    }
+  }
+
   static async delete(id) {
     try {
+      // Primero eliminamos las relaciones con historias
+      await this.deleteAuthorHistories(id);
+
+      // Luego eliminamos el autor
       const { data, error } = await supabase
         .from('autor')
         .delete()
@@ -117,12 +142,34 @@ class Author {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
+      
       return data;
+    } catch (error) {
+      console.error('Error en delete:', error);
+      throw error;
+    }
+  }
+
+  static async hasAssociatedHistories(id) {
+    try {
+      const { data, error } = await supabase
+        .from('historia_autor')
+        .select('idhistory')
+        .eq('idautor', id)
+        .limit(1);
+
+      if (error) {
+        throw error;
+      }
+      return data && data.length > 0;
     } catch (error) {
       throw error;
     }
   }
+
 
   static async uploadImage(authorId, image) {
     console.log('Iniciando uploadImage para authorId:', authorId);

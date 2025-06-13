@@ -116,10 +116,72 @@ class Actor {
     }
   }
 
+  static async deleteActorHistories(actorId) {
+    try {
+      // Primero, obtener las relaciones para poder eliminarlas
+      const { data: relations, error: findError } = await supabase
+        .from('historia_actor')
+        .delete()
+        .eq('idactor', actorId)
+        .select('*');
+
+      if (findError) {
+        console.error('Error al buscar relaciones de historias:', findError);
+        throw findError;
+      }
+
+      return relations;
+    } catch (error) {
+      console.error('Error en deleteActorHistories:', error);
+      throw error;
+    }
+  }
+
   static async delete(id) {
     try {
+      // Primero eliminamos las relaciones con historias
+      await this.deleteActorHistories(id);
+
+      // Luego eliminamos el actor
       const { data, error } = await supabase
         .from('actor')
+        .delete()
+        .eq('idactor', id)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error en delete:', error);
+      throw error;
+    }
+  }
+
+  static async hasAssociatedHistories(id) {
+    try {
+      const { data, error } = await supabase
+        .from('historia_actor')
+        .select('idhistory')
+        .eq('idactor', id)
+        .limit(1);
+
+      if (error) {
+        throw error;
+      }
+      return data && data.length > 0;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async deleteActorHistory(id) {
+    try {
+      const { data, error } = await supabase
+        .from('actor_history')
         .delete()
         .eq('idactor', id)
         .select()

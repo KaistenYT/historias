@@ -99,23 +99,47 @@ export class AuthorController {
 
   static async deleteAuthor(req, res) {
     try {
-      const deletedAuthor = await Author.delete(req.params.id); // Cambiado a deletedAuthor
-      if (!deletedAuthor) { // Verificamos si deletedAuthor es null o undefined
+      const authorId = req.params.id;
+      
+      // Primero obtenemos el actor para verificar que existe
+      const author = await Author.getById(authorId);
+      if (!author) {
         return res.status(404).json({
           success: false,
           error: 'Autor no encontrado'
         });
       }
+      
+      // Verificamos si tiene historias asociadas para informar al usuario
+      const hasHistories = await Author.hasAssociatedHistories(authorId);
+      
+      // Eliminamos el actor (esto también eliminará las relaciones)
+      const deletedAuthor = await Author.delete(authorId);
+      
+      if (!deletedAuthor) {
+        throw new Error('No se pudo eliminar el autor');
+      }
+      
+      // Mensaje informativo sobre las relaciones eliminadas
+      let message = 'Autor eliminado correctamente';
+      if (hasHistories) {
+        message += '. Se han eliminado las relaciones con las historias asociadas';
+      }
+      
       return res.json({
         success: true,
-        message: 'Autor eliminado correctamente',
-        data: deletedAuthor  // Devolvemos los datos eliminados
+        message: message,
+        data: deletedAuthor
       });
+      
     } catch (error) {
-      console.error('Error al eliminar el autor', error);
+      console.error('Error al eliminar el autor:', error);
+      
+      // Para otros errores
       return res.status(500).json({
         success: false,
-        error: error.message
+        error: 'Error al eliminar el autor',
+        message: error.message
       });
     }
   }

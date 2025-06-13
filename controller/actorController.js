@@ -103,20 +103,43 @@ export class ActorController {
 
   static async deleteActor(req, res) {
     try {
-      const deletedActor = await Actor.delete(req.params.id); // Cambiado a deletedActor
-      if (!deletedActor) { // Verificamos si deletedActor es null o undefined
+      const actorId = req.params.id;
+      
+      // Primero obtenemos el actor para verificar que existe
+      const actor = await Actor.getById(actorId);
+      if (!actor) {
         return res.status(404).json({
           success: false,
           error: 'Actor no encontrado'
         });
       }
+      
+      // Verificamos si tiene historias asociadas para informar al usuario
+      const hasHistories = await Actor.hasAssociatedHistories(actorId);
+      
+      // Eliminamos el actor (esto también eliminará las relaciones)
+      const deletedActor = await Actor.delete(actorId);
+      
+      if (!deletedActor) {
+        throw new Error('No se pudo eliminar el actor');
+      }
+      
+      // Mensaje informativo sobre las relaciones eliminadas
+      let message = 'Actor eliminado correctamente';
+      if (hasHistories) {
+        message += '. Se han eliminado las relaciones con las historias asociadas';
+      }
+      
       return res.json({
         success: true,
-        message: 'Actor eliminado correctamente',
-        data: deletedActor  // Devolvemos los datos eliminados
+        message: message,
+        data: deletedActor
       });
+      
     } catch (error) {
-      console.error('Error al eliminar el actor', error);
+      console.error('Error al eliminar el actor:', error);
+      
+      // Para otros errores
       return res.status(500).json({
         success: false,
         error: 'Error al eliminar el actor',
@@ -124,6 +147,8 @@ export class ActorController {
       });
     }
   }
+
+
 
   static async uploadActorImage(req, res) {
     const { actorId } = req.params;

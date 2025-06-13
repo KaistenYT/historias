@@ -10,7 +10,7 @@ const storage = multer.memoryStorage();
 const upload = multer({
     storage: storage,
     limits: {
-      fileSize: 5 * 1024 * 1024, // 5 MB (en bytes)
+      fileSize: 5 * 1024 * 1024, 
     },
   });
 
@@ -22,6 +22,5 @@ router.put('/update/:id', ActorController.updateActor); // Actualiza un actor po
 router.delete('/delete/:id', ActorController.deleteActor); // Elimina un actor por su ID
 router.post('/upload-image/:actorId/image', upload.single('file'), ActorController.uploadActorImage); // Sube la imagen del actor (APLICANDO el middleware)
 router.delete('/delete-image/:actorId/image', ActorController.deleteActorImage); // Elimina la imagen del actor
-
 export default router;
 
