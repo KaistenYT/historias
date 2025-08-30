@@ -1,5 +1,5 @@
 import Author from "../model/author.js";
-
+import fs from 'fs/promises';
 export class AuthorController {
   
   static async getAllAuthors(req, res) {
@@ -99,20 +99,94 @@ export class AuthorController {
 
   static async deleteAuthor(req, res) {
     try {
-      const deletedAuthor = await Author.delete(req.params.id); // Cambiado a deletedAuthor
-      if (!deletedAuthor) { // Verificamos si deletedAuthor es null o undefined
+      const authorId = req.params.id;
+      
+      // Primero obtenemos el actor para verificar que existe
+      const author = await Author.getById(authorId);
+      if (!author) {
         return res.status(404).json({
           success: false,
           error: 'Autor no encontrado'
         });
       }
+      
+      // Verificamos si tiene historias asociadas para informar al usuario
+      const hasHistories = await Author.hasAssociatedHistories(authorId);
+      
+      // Eliminamos el actor (esto también eliminará las relaciones)
+      const deletedAuthor = await Author.delete(authorId);
+      
+      if (!deletedAuthor) {
+        throw new Error('No se pudo eliminar el autor');
+      }
+      
+      // Mensaje informativo sobre las relaciones eliminadas
+      let message = 'Autor eliminado correctamente';
+      if (hasHistories) {
+        message += '. Se han eliminado las relaciones con las historias asociadas';
+      }
+      
       return res.json({
         success: true,
-        message: 'Autor eliminado correctamente',
-        data: deletedAuthor  // Devolvemos los datos eliminados
+        message: message,
+        data: deletedAuthor
+      });
+      
+    } catch (error) {
+      console.error('Error al eliminar el autor:', error);
+      
+      // Para otros errores
+      return res.status(500).json({
+        success: false,
+        error: 'Error al eliminar el autor',
+        message: error.message
+      });
+    }
+  }
+  
+  static async uploadAuthorImage(req, res) {
+    const { authorId } = req.params;
+
+    // Verificar si se envió un archivo
+    if (!req.file) {
+        return res.status(400).json({ message: 'Por favor, sube una imagen' });
+    }
+
+    try {
+        // Leer el contenido del archivo desde la ruta guardada por multer (diskStorage)
+        const imageBuffer = req.file.buffer;
+
+        // Llama a la función uploadImage de tu modelo Actor, pasando el buffer
+        const updatedAuthor = await Author.uploadImage(authorId, imageBuffer);
+
+        res.status(200).json(updatedAuthor); // Envía la respuesta con el actor actualizado (incluyendo la URL de la imagen)
+    } catch (error) {
+        console.error('Error al subir la imagen del autor en el controlador:', error);
+        res.status(500).json({ message: 'Error al subir la imagen del autor', error: error.message });
+    } finally {
+        // Opcional: Eliminar el archivo temporal del servidor después de subirlo a Supabase
+        if (req.file && req.file.path) {
+            try {
+                await fs.unlink(req.file.path);
+                console.log('Archivo temporal eliminado:', req.file.path);
+            } catch (unlinkError) {
+                console.error('Error al eliminar el archivo temporal:', unlinkError);
+            }
+        }
+      }
+    }
+  
+  static async deleteAuthorImage(req, res) {
+    try {
+      const authorId = req.params.authorId;
+      const deletedAuthor = await Author.deleteImage(authorId);
+      return res.json({
+        success: true,
+        message: 'Imagen eliminada exitosamente',
+        data: deletedAuthor
       });
     } catch (error) {
-      console.error('Error al eliminar el autor', error);
+      console.error('Error al eliminar la imagen del autor', error);
       return res.status(500).json({
         success: false,
         error: error.message

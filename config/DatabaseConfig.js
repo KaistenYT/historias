@@ -5,26 +5,9 @@ const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 // Check if environment variables are set
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing required environment variables');
-  console.error('Environment:', process.env.NODE_ENV || 'unknown');
-  console.error('SUPABASE_URL:', supabaseUrl);
-  console.error('SUPABASE_ANON_KEY:', supabaseAnonKey);
-  console.error('NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-  console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-  console.error('Available environment variables:', Object.keys(process.env));
-  throw new Error('Missing required environment variables');
-}
 
-// Log environment variables
-console.log('Initializing Supabase client...');
-console.log('Environment:', process.env.NODE_ENV || 'unknown');
-console.log('Using SUPABASE_URL:', !!process.env.SUPABASE_URL);
-console.log('Using NEXT_PUBLIC_SUPABASE_URL:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
-console.log('Using SUPABASE_ANON_KEY:', !!process.env.SUPABASE_ANON_KEY);
-console.log('Using NEXT_PUBLIC_SUPABASE_ANON_KEY:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-console.log('Final URL:', supabaseUrl);
-console.log('Final Anon Key:', supabaseAnonKey);
+
+
 
 // Create Supabase client
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -95,19 +78,6 @@ async function connectHistoryTable() {
   }
 }
 
-/*async function connectParticipationTable() {
-  const { error } = await supabase
-    .from('participation')
-    .insert([]);
-    //.single(); Removed .single()
-
-  if (error) {
-    console.error('Error al interactuar con la tabla "participation":', error);
-    console.error('Detalles del error:', error);
-  } else {
-    console.log('Tabla "participation" creada.');
-  }
-}*/
 
 
 
@@ -115,7 +85,7 @@ async function connectInitialTables() {
   await connectActorTable();
   await connectTableAuthor();
   await connectHistoryTable();
- // await connectParticipationTable();
+
   console.log('Tablas iniciales existentes. 😁');
 }
 

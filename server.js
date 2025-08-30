@@ -9,8 +9,8 @@ import bodyParser from 'body-parser';
 import actorRoutes from './routes/actorRoutes.js';
 import authorRoutes from './routes/authorRoutes.js';
 import historyRoutes from './routes/historyRoutes.js';
-
-
+import tallerRoutes from './routes/tallerRoutes.js';
+import userRoutes from './routes/userRoutes.js';  
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,12 +19,25 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.disable('x-powered-by');
 app.use(cors({
-  origin: ['https://eco-museo-api.vercel.app'], // Ensure this is the exact origin of your frontend
+  origin: ['https://eco-museo-api.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://historias-v2-api.vercel.app',
+    'https://ecomuseomarioeddy.netlify.app',
+  ], // Ensure this is the exact origin of your frontend
   methods: 'GET, POST, PUT, DELETE, OPTIONS',
   allowedHeaders: 'Content-Type, Authorization',
   credentials: true // This is the critical part
 }));
-app.use(express.json());
+
+app.options('*', cors());
+
+
+// Configura el límite para las peticiones JSON
+app.use(express.json({ limit: '5mb' })); // Asegúrate de que este límite sea suficiente
+
+// Configura el límite para las peticiones URL-encoded (si las usas)
+app.use(express.urlencoded({ limit: '5mb', extended: true }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -45,6 +58,8 @@ app.use((req, res, next) => {
 app.use('/actors', actorRoutes);
 app.use('/authors', authorRoutes);
 app.use('/histories', historyRoutes);
+app.use('/tallers', tallerRoutes);
+app.use('/users', userRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -82,6 +97,10 @@ app.use((err, req, res, next) => {
     error: err.message || 'Internal Server Error',
     message: err.message || 'Something went wrong!' 
   });
+});
+//solo para pruebas
+app.listen(port, () => {
+  console.log(`Servidor escuchando en http://localhost:${port}`);
 });
 
 // Export the app
